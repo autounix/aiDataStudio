@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+<title>aiDataStudio 下载中心</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet" />
+<style>
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+body {
+  display: flex;
+  flex-direction: column;
+  font-family: "Inter", sans-serif;
+  color: #fff;
+  background: radial-gradient(circle at top right, #4b5dff 0%, #181a2f 70%);
+  background-attachment: fixed;
+  overflow-x: hidden;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 60px;
+}
+
+header {
+  text-align: center;
+  padding: 100px 20px 40px;
+}
+header h1 {
+  font-size: 3em;
+  font-weight: 900;
+  margin-bottom: 15px;
+  background: linear-gradient(90deg, #a78bfa, #6366f1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.header-line {
+  width: 80px;
+  height: 4px;
+  margin: 15px auto 20px;
+  background: linear-gradient(90deg, #6366f1, #a78bfa);
+  border-radius: 2px;
+}
+.header-desc {
+  font-size: 1.1em;
+  color: #d6d9ff;
+  opacity: 0.95;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.version-btn-container {
+  text-align: center;
+  margin-top: 20px;
+}
+#version-btn {
+  background: linear-gradient(135deg, #6366f1, #7c3aed);
+  border: none;
+  border-radius: 40px;
+  padding: 12px 30px;
+  font-size: 1em;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(124,58,237,0.35);
+  transition: all 0.3s ease;
+}
+#version-btn:hover {
+  background: linear-gradient(135deg, #7b80ff, #a78bfa);
+  transform: translateY(-2px);
+}
+.history-link {
+  pointer-events: none;
+  color: #FFA500;
+  text-decoration: underline;
+  margin-left: 5px;
+}
+
+section.download {
+  width: 100%;
+  max-width: 1000px;
+  margin: 50px auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  padding: 0 20px;
+}
+.download-card {
+  background: rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 40px 20px;
+  text-align: center;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.18);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  transition: all 0.35s ease;
+}
+.download-card:hover {
+  transform: translateY(-8px);
+  background: rgba(255,255,255,0.18);
+}
+.os-logo {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 15px;
+}
+.download-card h2 {
+  font-size: 1.3em;
+  font-weight: 600;
+  background: linear-gradient(90deg,#d0d4ff,#ffffff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 20px;
+}
+.btn-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.download-card a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 160px;
+  padding: 10px 0;
+  border-radius: 40px;
+  font-weight: 600;
+  font-size: 0.9em;
+  color: #fff;
+  background: linear-gradient(135deg,#6366f1,#7c3aed);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+.download-card a:hover {
+  background: linear-gradient(135deg,#7b80ff,#a78bfa);
+  transform: translateY(-3px);
+}
+.mac-tip {
+  margin-top: 10px;
+  font-size: 0.9em;
+  color: #ffcccb;
+  display: none;
+}
+
+footer {
+  text-align: center;
+  padding: 15px 10px;
+  color: #ccc;
+  font-size: 0.9em;
+  background: rgba(255,255,255,0.05);
+  border-top: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 2;
+}
+
+.version-panel {
+  position: fixed;
+  top: 0;
+  right: -400px;
+  width: 380px;
+  height: 100%;
+  background: rgba(24,26,47,0.96);
+  backdrop-filter: blur(20px);
+  box-shadow: -5px 0 40px rgba(0,0,0,0.5);
+  border-left: 1px solid rgba(255,255,255,0.15);
+  padding: 20px;
+  overflow-y: auto;
+  transition: right 0.35s ease, bottom 0.35s ease, opacity 0.35s ease;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 100;
+}
+.version-panel.active {
+  right: 0;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  position: relative;
+}
+.panel-header .latest-version {
+  font-size: 1.8em;
+  font-weight: 900;
+  color: #facc15;
+  text-align: center;
+}
+.panel-header .close-btn {
+  position: absolute;
+  right: 0;
+  font-size: 1.8em;
+  cursor: pointer;
+  color: #bbb;
+}
+.panel-header .close-btn:hover { color: #fff; }
+
+.history-list { list-style: none; padding: 0; margin: 0; }
+.history-item {
+  margin-bottom: 20px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.08);
+  padding: 15px 20px;
+  transition: background 0.3s ease;
+}
+.history-item:hover { background: rgba(255,255,255,0.12); }
+.history-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  color: #d6d9ff;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+  padding-bottom: 5px;
+}
+.toggle-icon { font-size: 0.8em; color: #aaa; }
+.release-date { font-size: 0.85em; color: #aaa; margin-top: 5px; }
+.release-note { list-style: disc; margin: 8px 0 0 18px; color: #d6d9ff; font-size: 0.95em; line-height: 1.5; }
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(3px);
+  z-index: 200;
+  justify-content: center;
+  align-items: center;
+}
+.modal-overlay.active { display: flex; }
+.modal-content {
+  background: rgba(24,26,47,0.95);
+  padding: 20px;
+  border-radius: 15px;
+  max-width: 90%;
+  max-height: 85%;
+  overflow-y: auto;
+  position: relative;
+}
+.modal-content .close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 1.8em;
+  cursor: pointer;
+  color: #bbb;
+}
+.modal-content .close-btn:hover { color: #fff; }
+
+@media (max-width: 768px) {
+  header { padding: 70px 10px 30px; }
+  header h1 { font-size: 2em; }
+
+  section.download {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 0 5px;
+    transform: scale(0.9);
+  }
+  .download-card { padding: 25px 10px; }
+  .download-card h2 { font-size: 1em; }
+  .os-logo { width: 45px; height: 45px; }
+  .download-card a { width: 100px; font-size: 0.75em; }
+
+  .version-panel { display: none; }
+}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>aiDataStudio 下载中心</h1>
+    <div class="header-line"></div>
+    <p class="header-desc">
+      支持多类型（多边形、矩形、关键点、画笔等）的数据标注工具，具备快捷键、标签管理和多格式导出功能
+    </p>
+  </header>
+
+  <div class="version-btn-container">
+    <button id="version-btn">
+      最新版本 v0.0.2 <span class="history-link">查看更新记录</span>
+    </button>
+  </div>
+
+  <section class="download">
+    <div class="download-card">
+      <img class="os-logo" src="https://upload.wikimedia.org/wikipedia/commons/5/5f/Windows_logo_-_2012.svg">
+      <h2>Windows</h2>
+      <div class="btn-group">
+        <a href="https://github.com/autounix/aiDataStudio/releases/download/v0.0.2/aiDataStudioSetup.exe">.exe 下载</a>
+      </div>
+    </div>
+    <div class="download-card">
+      <img class="os-logo" src="https://upload.wikimedia.org/wikipedia/commons/a/af/Tux.png">
+      <h2>Linux</h2>
+      <div class="btn-group">
+        <a href="https://github.com/autounix/aiDataStudio/releases/download/v0.0.2/aiDataStudio_v0.0.2_d696e1d_x86_64.deb">.deb 下载</a>
+        <a href="https://github.com/autounix/aiDataStudio/releases/download/v0.0.2/aiDataStudio_v0.0.2_d696e1d_x86_64.run">.run 下载</a>
+      </div>
+    </div>
+    <div class="download-card">
+      <img class="os-logo" src="https://upload.wikimedia.org/wikipedia/commons/8/84/Apple_Computer_Logo_rainbow.svg" alt="Mac Logo">
+      <h2>Mac</h2>
+      <div class="btn-group">
+        <a id="mac-download" href="#" download>.app下载</a>
+        <div id="mac-tip" class="mac-tip">Mac 版本暂未发布</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  © 2025 aiDataStudio | 
+  <a href="https://github.com/autounix/aiDataStudio" style="color:#a78bfa;text-decoration:none;">
+    GitHub 仓库
+  </a> | 
+  <a href="mailto:aidatastudio@163.com?subject=aiDataStudio反馈&body=" 
+     style="color:#a78bfa;text-decoration:none;">
+    反馈BUG
+  </a> | 版权所有
+</footer>
+
+<div class="version-panel" id="version-panel">
+  <div class="panel-header">
+    <div class="latest-version">更新记录</div>
+    <div class="close-btn" id="close-panel">&times;</div>
+  </div>
+  <ul class="history-list">
+    <li class="history-item">
+      <div class="history-title">v0.0.2 <span class="toggle-icon">&#9650;</span></div>
+      <div class="release-date">发布时间：2025-10-16</div>
+      <ul class="release-note">
+        <li>已支持多边形、关键点、画笔和矩形等多种标注类型</li>
+        <li>支持将标注数据导出为 txt, json, xml 格式</li>
+      </ul>
+    </li>
+    <li class="history-item">
+      <div class="history-title">v0.0.1 <span class="toggle-icon">&#9650;</span></div>
+      <div class="release-date">发布时间：2025-09-30</div>
+      <ul class="release-note">
+        <li>初版发布，支持矩形数据的标定和导出</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-content">
+    <div class="panel-header">
+      <div class="latest-version">更新记录</div>
+      <div class="close-btn" id="modal-close">&times;</div>
+    </div>
+    <ul class="history-list">
+      <li class="history-item">
+        <div class="history-title">v0.0.2 <span class="toggle-icon">&#9650;</span></div>
+        <div class="release-date">发布时间：2025-10-16</div>
+        <ul class="release-note">
+          <li>已支持多边形、关键点、画笔和矩形等多种标注类型</li>
+          <li>支持将标注数据导出为 txt, json, xml 格式</li>
+        </ul>
+      </li>
+      <li class="history-item">
+        <div class="history-title">v0.0.1 <span class="toggle-icon">&#9650;</span></div>
+        <div class="release-date">发布时间：2025-09-30</div>
+        <ul class="release-note">
+          <li>初版发布，支持矩形数据的标定和导出</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<script>
+const macBtn = document.getElementById('mac-download');
+const macTip = document.getElementById('mac-tip');
+macBtn.addEventListener('click', e => { e.preventDefault(); macTip.style.display='block'; });
+
+const versionBtn = document.getElementById("version-btn");
+const versionPanel = document.getElementById("version-panel");
+const closePanel = document.getElementById("close-panel");
+const modalOverlay = document.getElementById("modal-overlay");
+const modalClose = document.getElementById("modal-close");
+
+function isMobile() { return window.innerWidth <= 768; }
+
+versionBtn.addEventListener('click', () => {
+  if(isMobile()){
+    modalOverlay.classList.add('active');
+    modalOverlay.querySelectorAll('.release-note').forEach(r => r.style.display='block');
+    modalOverlay.querySelectorAll('.toggle-icon').forEach(i => i.innerHTML='&#9650;');
+  } else {
+    versionPanel.classList.toggle('active');
+    versionPanel.querySelectorAll('.release-note').forEach(r => r.style.display='block');
+    versionPanel.querySelectorAll('.toggle-icon').forEach(i => i.innerHTML='&#9650;');
+  }
+});
+
+closePanel.addEventListener('click', () => { versionPanel.classList.remove('active'); });
+modalClose.addEventListener('click', () => { modalOverlay.classList.remove('active'); });
+
+document.addEventListener('click', function(e){
+  if(!versionPanel.contains(e.target) && !versionBtn.contains(e.target)){
+    versionPanel.classList.remove('active');
+  }
+  if(!modalOverlay.contains(e.target) && !versionBtn.contains(e.target)){
+    modalOverlay.classList.remove('active');
+  }
+});
+
+document.querySelectorAll('.history-title').forEach(title => {
+  title.addEventListener('click', () => {
+    const note = title.nextElementSibling.nextElementSibling;
+    const icon = title.querySelector('.toggle-icon');
+    if(note.style.display === 'block'){ note.style.display='none'; icon.innerHTML='&#9660;'; }
+    else{ note.style.display='block'; icon.innerHTML='&#9650;'; }
+  });
+});
+</script>
+
+<style>
+#bubble-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 300;
+  overflow: hidden;
+}
+
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-weight: 500;
+  font-size: 0.65em;
+  text-align: center;
+  pointer-events: auto;
+  cursor: pointer;
+  padding: 8px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  will-change: transform, opacity;
+  transition: box-shadow 0.2s ease, background-color 0.3s ease;
+  user-select: none;
+  word-break: break-word;
+}
+
+.bubble:hover {
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.35);
+}
+</style>
+
+<div id="bubble-container"></div>
+
+<script>
+const bubbleContainer = document.getElementById('bubble-container');
+
+function random(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+function createFloatingBubble(text) {
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.innerHTML = text || "欢迎<br>反馈";
+
+  const size = random(40, 50);
+  bubble.style.width = `${size}px`;
+  bubble.style.height = `${size}px`;
+
+  let x = random(0, window.innerWidth - size);
+  let y = random(0, window.innerHeight - size);
+  let targetX = random(0, window.innerWidth - size);
+  let targetY = random(0, window.innerHeight - size);
+  let speed = random(0.5, 1.2);
+
+  const baseColor = { r: random(80, 150), g: random(80, 150), b: random(180, 230) };
+  let colorOffset = random(0, 2 * Math.PI);
+
+  function animate() {
+    const dx = targetX - x;
+    const dy = targetY - y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const dirX = dx / dist || 0;
+    const dirY = dy / dist || 0;
+    x += dirX * speed;
+    y += dirY * speed;
+
+    if (dist < 1) {
+      targetX = random(0, window.innerWidth - size);
+      targetY = random(0, window.innerHeight - size);
+      speed = random(0.5, 1.2);
+    }
+
+    const swayX = Math.sin(Date.now() * 0.002 + x * 0.01) * 20;
+    const swayY = Math.cos(Date.now() * 0.0025 + y * 0.01) * 15;
+    bubble.style.transform = `translate(${x + swayX}px, ${y + swayY}px)`;
+
+    colorOffset += 0.02;
+    const alpha = 0.35 + 0.25 * Math.sin(colorOffset);
+    bubble.style.backgroundColor = `rgba(${baseColor.r}, ${baseColor.g}, ${baseColor.b}, ${alpha})`;
+    bubble.style.boxShadow = `0 0 ${8 + 8 * alpha}px rgba(${baseColor.r}, ${baseColor.g}, ${baseColor.b}, ${alpha})`;
+
+    requestAnimationFrame(animate);
+  }
+
+  bubble.addEventListener('click', () => {
+    window.location.href = "mailto:aidatastudio@163.com?subject=aiDataStudio反馈&body=";
+  });
+
+  animate();
+  bubbleContainer.appendChild(bubble);
+}
+
+createFloatingBubble("欢迎<br>反馈");
+</script>
+
+</body>
+</html>
